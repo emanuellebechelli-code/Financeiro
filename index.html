@@ -1,0 +1,199 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Planejamento Financeiro</title>
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <header class="topbar">
+      <div>
+        <p class="eyebrow">Controle pessoal</p>
+        <h1>Planejamento Financeiro</h1>
+      </div>
+      <div class="top-controls">
+        <label>
+          Saldo inicial
+          <input id="initialBalance" type="number" min="0" step="0.01" placeholder="0,00" />
+        </label>
+        <label>
+          Mês
+          <input id="monthPicker" type="month" />
+        </label>
+      </div>
+    </header>
+
+    <main class="shell">
+      <section class="summary" aria-label="Resumo do mês">
+        <article class="metric metric-income">
+          <span>Entradas</span>
+          <strong id="incomeTotal">R$ 0,00</strong>
+        </article>
+        <article class="metric metric-expense">
+          <span>Gastos diários</span>
+          <strong id="expenseTotal">R$ 0,00</strong>
+        </article>
+        <article class="metric metric-subscriptions">
+          <span>Assinaturas</span>
+          <strong id="subscriptionTotal">R$ 0,00</strong>
+        </article>
+        <article class="metric metric-balance">
+          <span>Saldo atual sem assinaturas</span>
+          <strong id="balanceTotal">R$ 0,00</strong>
+        </article>
+        <article class="metric metric-tithe">
+          <span>Dízimo 10%</span>
+          <strong id="titheTotal">R$ 0,00</strong>
+        </article>
+        <article class="metric month-rating" id="ratingCard">
+          <span>Parâmetro do mês</span>
+          <strong id="monthRating">Sem dados</strong>
+        </article>
+      </section>
+
+      <section class="workspace">
+        <aside class="panel forms-panel">
+          <div class="tabs" role="tablist" aria-label="Cadastro">
+            <button class="tab active" type="button" data-tab="transaction">Lançamento</button>
+            <button class="tab" type="button" data-tab="subscription">Assinatura</button>
+            <button class="tab" type="button" data-tab="goal">Preciso adquirir</button>
+          </div>
+
+          <form id="transactionForm" class="form active-form">
+            <h2>Novo lançamento</h2>
+            <label>
+              Data
+              <input name="date" type="date" required />
+            </label>
+            <label>
+              Tipo
+              <select name="type" required>
+                <option value="income">Entrada</option>
+                <option value="expense">Saída</option>
+              </select>
+            </label>
+            <label>
+              Categoria
+              <select name="category" required>
+                <option>Salário</option>
+                <option>Extra</option>
+                <option>Alimentação</option>
+                <option>Moradia</option>
+                <option>Transporte</option>
+                <option>Saúde</option>
+                <option>Educação</option>
+                <option>Lazer</option>
+                <option>Compras</option>
+                <option>Dízimo</option>
+                <option>Outros</option>
+              </select>
+            </label>
+            <label>
+              Descrição
+              <input name="description" type="text" placeholder="Ex.: mercado, salário, remédio" required />
+            </label>
+            <label>
+              Valor
+              <input name="amount" type="number" min="0.01" step="0.01" placeholder="0,00" required />
+            </label>
+            <button class="primary" type="submit">Adicionar lançamento</button>
+          </form>
+
+          <form id="subscriptionForm" class="form">
+            <h2>Nova assinatura</h2>
+            <label>
+              Assinatura
+              <input name="name" type="text" placeholder="Ex.: Netflix, Spotify" required />
+            </label>
+            <label>
+              Valor mensal
+              <input name="amount" type="number" min="0.01" step="0.01" placeholder="0,00" required />
+            </label>
+            <label>
+              Dia de vencimento
+              <input name="dueDay" type="number" min="1" max="31" value="1" required />
+            </label>
+            <label class="check-row">
+              <input name="active" type="checkbox" checked />
+              Ativa
+            </label>
+            <button class="primary" type="submit">Adicionar assinatura</button>
+          </form>
+
+          <form id="goalForm" class="form">
+            <h2>Preciso adquirir</h2>
+            <label>
+              O que deseja adquirir
+              <input name="name" type="text" placeholder="Ex.: notebook, geladeira" required />
+            </label>
+            <label>
+              Valor da meta
+              <input name="amount" type="number" min="0.01" step="0.01" placeholder="0,00" required />
+            </label>
+            <label>
+              Já tenho guardado
+              <input name="saved" type="number" min="0" step="0.01" placeholder="0,00" value="0" />
+            </label>
+            <label>
+              Período em meses
+              <input name="months" type="number" min="1" step="1" value="6" required />
+            </label>
+            <button class="primary" type="submit">Adicionar meta</button>
+          </form>
+        </aside>
+
+        <section class="content">
+          <section class="panel chart-panel">
+            <div class="panel-header">
+              <div>
+                <p class="eyebrow">Gráficos</p>
+                <h2>Resumo semanal, quinzenal e mensal</h2>
+              </div>
+              <div class="segmented" aria-label="Tipo de gráfico">
+                <button type="button" class="active" data-chart="weekly">Semanal</button>
+                <button type="button" data-chart="biweekly">Quinzenal</button>
+                <button type="button" data-chart="monthly">Mensal</button>
+              </div>
+            </div>
+            <canvas id="mainChart" width="980" height="380" aria-label="Gráfico financeiro"></canvas>
+          </section>
+
+          <section class="lists">
+            <article class="panel list-panel">
+              <div class="panel-header tight">
+                <h2>Lançamentos</h2>
+                <button id="clearTransactions" class="ghost" type="button">Limpar lançamentos</button>
+              </div>
+              <div id="transactionList" class="item-list"></div>
+            </article>
+
+            <article class="panel list-panel">
+              <div class="panel-header tight">
+                <h2>Assinaturas</h2>
+                <button id="clearSubscriptions" class="ghost" type="button">Limpar assinaturas</button>
+              </div>
+              <div id="subscriptionList" class="item-list"></div>
+            </article>
+          </section>
+
+          <section class="panel goals-panel">
+            <div class="panel-header tight">
+              <div>
+                <p class="eyebrow">Metas</p>
+                <h2>Preciso adquirir</h2>
+              </div>
+              <button id="clearGoals" class="ghost" type="button">Limpar metas</button>
+            </div>
+            <div class="goals-layout">
+              <div id="goalList" class="item-list"></div>
+              <canvas id="goalChart" width="620" height="320" aria-label="Gráfico das metas"></canvas>
+            </div>
+          </section>
+        </section>
+      </section>
+    </main>
+
+    <script src="./app.js"></script>
+  </body>
+</html>
